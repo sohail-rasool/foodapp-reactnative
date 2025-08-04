@@ -1,23 +1,37 @@
 import CustomButton from "@/components/CustomButton";
 import CustomInput from "@/components/CustomInput";
-import { Link } from "expo-router";
+import { setUser } from "../../services/slices/appSlice";
+import { useUserLoginMutation } from "@/services/slices/userSlice";
+import { Link, router } from "expo-router";
 import { useState } from "react";
 import { Alert, Text, View } from "react-native";
+import Toast from "react-native-toast-message";
+import { useDispatch } from "react-redux";
 
 const SignIn = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({ email: "", password: "" });
+  const [userLogin, { isLoading }] = useUserLoginMutation();
+  const dispatch = useDispatch();
   const submit = async () => {
     try {
       if (!form?.email || !form?.password) {
         return Alert.alert("Error", "Please Enter valid email/password");
       }
-      setIsSubmitting(true);
-      Alert.alert("Success", "User signed in successfully.");
+      const userData = await userLogin({ email: form?.email, password: form?.password }).unwrap();
+      dispatch(setUser(userData));
+      Toast.show({
+        type: "success",
+        text1: "Login",
+        text2: "Logedin successfully",
+      });
+      // Redirect to home
+      router.replace("/");
     } catch (error: any) {
-      Alert.alert("Error", error.message || "");
-    } finally {
-      setIsSubmitting(false);
+      Toast.show({
+        type: "error",
+        text1: "Authentication Error",
+        text2: error?.data?.message || "Please try again.",
+      });
     }
   };
   return (
@@ -40,7 +54,7 @@ const SignIn = () => {
         label="Password"
         secureTextEntry={true}
       />
-      <CustomButton title="Sign In" onPress={submit} isLoading={isSubmitting} />
+      <CustomButton title="Sign In" onPress={submit} isLoading={isLoading} />
       <View className="flex-row gap-2 justify-center mt-5">
         <Text className="base-regular text-gray-100">
           Don&apos;t have an account ?

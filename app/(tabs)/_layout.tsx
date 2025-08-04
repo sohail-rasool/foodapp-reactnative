@@ -1,7 +1,10 @@
+import { RootState } from "@/store/store";
 import { Redirect, Slot } from "expo-router";
+import { useSelector } from "react-redux";
 
 const Layout = () => {
-  const isAuthenticated = false;
+  const userId = useSelector((state: RootState) => state.app?.user?.id);
+  const isAuthenticated = userId;
   if (!isAuthenticated) {
     return <Redirect href="/sign-in" />;
   }

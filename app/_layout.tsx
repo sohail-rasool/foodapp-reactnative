@@ -3,6 +3,9 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "./global.css";
+import { Provider } from "react-redux";
+import { store } from "@/store/store";
+import Toast from 'react-native-toast-message';
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -22,5 +25,10 @@ export default function RootLayout() {
   if (!loaded && !error) {
     return null;
   }
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Provider store={store}>
+      <Stack screenOptions={{ headerShown: false }} />
+      <Toast />
+    </Provider>
+  );
 }

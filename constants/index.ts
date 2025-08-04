@@ -200,3 +200,7 @@ export const images = {
     trash,
     user,
 };
+
+export const apiEndpoints = {
+    LOGIN: "/api/users/login",
+}
